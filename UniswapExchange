@@ -1,0 +1,27 @@
+pragma solidity ^0.8.0;
+
+import './IERC20.sol';
+
+contract UniswapExchange {
+    address private token1;
+    address private token2;
+    uint256 private rate; // Обменный курс (1 token1 = rate token2)
+
+    constructor(address _token1, address _token2, uint256 _rate) {
+        token1 = _token1;
+        token2 = _token2;
+        rate = _rate;
+    }
+
+    function swapToken1ToToken2(uint256 amount) external {
+        IERC20(token1).transferFrom(msg.sender, address(this), amount);
+        uint256 token2Amount = amount * rate;
+        IERC20(token2).transfer(msg.sender, token2Amount);
+    }
+
+    function swapToken2ToToken1(uint256 amount) external {
+        IERC20(token2).transferFrom(msg.sender, address(this), amount);
+        uint256 token1Amount = amount / rate;
+        IERC20(token1).transfer(msg.sender, token1Amount);
+    }
+}
